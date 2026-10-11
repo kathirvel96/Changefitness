@@ -1,0 +1,1205 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Change Fitness Center | Best Gym in Sankarankoil</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            neon: '#22c55e', // Vibrant emerald/lime
+                            glow: '#4ade80',
+                            accent: '#f97316', // Cyber orange
+                            dark: '#08090b',
+                            card: '#12141a',
+                            border: '#1f2430'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Teko', 'Impact', 'sans-serif']
+                    },
+                    boxShadow: {
+                        'neon': '0 0 25px rgba(34, 197, 94, 0.45)',
+                        'neon-orange': '0 0 25px rgba(249, 115, 22, 0.45)',
+                        'glass': '0 8px 32px 0 rgba(0, 0, 0, 0.37)'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Google Fonts & Font Awesome Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800;900&family=Teko:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Three.js for 3D Graphics & Canvas Confetti -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        body {
+            background-color: #07080a;
+            color: #f3f4f6;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+        
+        .font-impactful {
+            font-family: 'Teko', sans-serif;
+            letter-spacing: 0.05em;
+            line-height: 0.95;
+        }
+
+        .mesh-gradient-hero {
+            background: radial-gradient(circle at 50% 30%, rgba(34, 197, 94, 0.15) 0%, rgba(0,0,0,0.85) 70%),
+                        radial-gradient(circle at 80% 80%, rgba(249, 115, 22, 0.1) 0%, transparent 50%);
+        }
+
+        .glass-panel {
+            background: rgba(18, 20, 26, 0.7);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .glass-card {
+            background: linear-gradient(145deg, rgba(24, 27, 36, 0.8), rgba(13, 15, 20, 0.95));
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .glass-card:hover {
+            border-color: rgba(34, 197, 94, 0.5);
+            transform: translateY(-6px);
+            box-shadow: 0 15px 35px -10px rgba(34, 197, 94, 0.25);
+        }
+
+        .text-glow {
+            text-shadow: 0 0 20px rgba(34, 197, 94, 0.6);
+        }
+
+        .text-glow-orange {
+            text-shadow: 0 0 20px rgba(249, 115, 22, 0.6);
+        }
+
+        /* 3D tilt perspective */
+        .card-perspective {
+            perspective: 1000px;
+        }
+
+        /* Scanline animation for digital ticker */
+        .scanlines {
+            position: relative;
+        }
+        .scanlines::before {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+            background-size: 100% 4px;
+            z-index: 2;
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 0.6; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.05); }
+        }
+
+        .animate-pulse-glow {
+            animation: pulseGlow 3s infinite ease-in-out;
+        }
+
+        /* Hide scrollbars but keep smooth scrolling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #090a0d;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #22c55e;
+        }
+    </style>
+</head>
+<body class="selection:bg-brand-neon selection:text-black">
+
+    <!-- Floating Header -->
+    <header class="fixed top-0 left-0 right-0 z-50 transition-all duration-300" id="mainHeader">
+        <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div class="glass-panel rounded-2xl px-5 py-3 flex items-center justify-between border border-white/10 shadow-2xl">
+                <!-- Brand Logo -->
+                <a href="#" class="flex items-center space-x-3 group">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-neon to-brand-accent flex items-center justify-center text-black font-black text-xl shadow-neon group-hover:rotate-12 transition-transform duration-300">
+                        <i class="fa-solid fa-bolt text-lg"></i>
+                    </div>
+                    <div>
+                        <span class="font-impactful text-2xl sm:text-3xl tracking-wider text-white uppercase block leading-none">CHANGE</span>
+                        <span class="text-[10px] tracking-widest text-brand-neon uppercase font-semibold">Fitness Center • Sankarankoil</span>
+                    </div>
+                </a>
+
+                <!-- Desktop Menu -->
+                <div class="hidden lg:flex items-center space-x-8 font-medium text-sm text-gray-300">
+                    <a href="#about" class="hover:text-brand-neon transition-colors">About Gym</a>
+                    <a href="#offer" class="hover:text-brand-neon flex items-center gap-1.5 transition-colors">
+                        <span class="relative flex h-2 w-2">
+                          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-neon opacity-75"></span>
+                          <span class="relative inline-flex rounded-full h-2 w-2 bg-brand-neon"></span>
+                        </span>
+                        Exclusive Offer
+                    </a>
+                    <a href="#features" class="hover:text-brand-neon transition-colors">Equipment & Training</a>
+                    <a href="#quotes" class="hover:text-brand-neon transition-colors">Daily Fuel</a>
+                    <a href="#location" class="hover:text-brand-neon transition-colors">Location & Hours</a>
+                </div>
+
+                <!-- Action CTA -->
+                <div class="flex items-center space-x-3">
+                    <button onclick="openModal('offerModal')" class="relative group overflow-hidden px-4 sm:px-6 py-2.5 rounded-xl bg-brand-neon text-black font-bold text-xs sm:text-sm uppercase tracking-wider shadow-neon hover:scale-105 active:scale-95 transition-all">
+                        <span class="relative z-10 flex items-center gap-2">
+                            <i class="fa-solid fa-fire text-black"></i>
+                            Claim ₹1,800 Deal
+                        </span>
+                    </button>
+                    <!-- Mobile Hamburger -->
+                    <button id="mobileMenuBtn" class="lg:hidden w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white text-lg">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Mobile Menu Dropdown -->
+            <div id="mobileMenu" class="hidden mt-3 p-5 rounded-2xl glass-panel flex-col space-y-4 lg:hidden border border-white/10">
+                <a href="#about" onclick="toggleMobileMenu()" class="text-gray-200 hover:text-brand-neon py-1 font-medium">About Gym</a>
+                <a href="#offer" onclick="toggleMobileMenu()" class="text-brand-neon font-bold py-1 flex items-center justify-between">
+                    <span>🔥 3 Months for ₹1,800 Deal</span>
+                    <span class="text-xs bg-brand-neon/20 px-2 py-0.5 rounded text-brand-neon">LIMITED</span>
+                </a>
+                <a href="#features" onclick="toggleMobileMenu()" class="text-gray-200 hover:text-brand-neon py-1 font-medium">Programs & Equipment</a>
+                <a href="#quotes" onclick="toggleMobileMenu()" class="text-gray-200 hover:text-brand-neon py-1 font-medium">Beast Quotes</a>
+                <a href="#location" onclick="toggleMobileMenu()" class="text-gray-200 hover:text-brand-neon py-1 font-medium">Timings & Contact</a>
+                <div class="pt-2 border-t border-white/10 flex gap-2">
+                    <a href="tel:+919876543210" class="flex-1 text-center py-2.5 rounded-xl bg-white/10 text-xs font-bold text-white">Call Direct</a>
+                    <button onclick="openModal('offerModal'); toggleMobileMenu()" class="flex-1 py-2.5 rounded-xl bg-brand-neon text-black text-xs font-bold uppercase">Enroll Now</button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section with Three.js Background -->
+    <section class="relative min-h-screen flex items-center justify-center pt-28 pb-20 overflow-hidden mesh-gradient-hero">
+        <!-- Three.js Canvas Container -->
+        <div id="three-container" class="absolute inset-0 z-0 pointer-events-auto opacity-70"></div>
+
+        <!-- Ambient Glow Orbs -->
+        <div class="absolute top-1/4 left-10 w-96 h-96 bg-brand-neon/15 rounded-full blur-[140px] pointer-events-none animate-pulse-glow"></div>
+        <div class="absolute bottom-10 right-10 w-80 h-80 bg-brand-accent/15 rounded-full blur-[140px] pointer-events-none"></div>
+
+        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center pt-8">
+            <!-- Badge -->
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-neon/10 border border-brand-neon/30 text-brand-neon text-xs sm:text-sm font-semibold mb-6 tracking-wide backdrop-blur-md">
+                <span class="flex h-2 w-2 rounded-full bg-brand-neon animate-ping"></span>
+                <span>SANKARANKOIL'S PREMIER 24/6 FITNESS DESTINATION</span>
+            </div>
+
+            <!-- Main Heading with impactful typography -->
+            <h1 class="font-impactful text-6xl sm:text-8xl md:text-9xl uppercase font-extrabold tracking-tight leading-none text-white drop-shadow-2xl">
+                TRANSFORM YOUR <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-neon via-brand-glow to-white text-glow">BODY</span><br>
+                ELEVATE YOUR <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-accent via-amber-300 to-white text-glow-orange">MIND</span>
+            </h1>
+
+            <p class="max-w-2xl mx-auto text-base sm:text-xl text-gray-300 mt-6 leading-relaxed font-light">
+                Experience raw intensity and premier strength conditioning at <strong class="text-white font-semibold">Change Fitness Center</strong>. Designed for serious gains, weight loss, and athletic excellence.
+            </p>
+
+            <!-- Highlight Offer Teaser -->
+            <div class="mt-8 inline-block max-w-xl mx-auto p-1 rounded-2xl bg-gradient-to-r from-brand-neon via-brand-accent to-brand-neon animate-gradient">
+                <div class="bg-black/90 backdrop-blur-xl px-6 py-3.5 rounded-[14px] flex flex-wrap items-center justify-center gap-3">
+                    <span class="text-xs sm:text-sm font-bold uppercase tracking-widest text-brand-neon flex items-center gap-1.5">
+                        <i class="fa-solid fa-bolt-lightning"></i> NEW JOINER OFFER:
+                    </span>
+                    <span class="text-white font-extrabold text-sm sm:text-base">3 Months for Only <span class="text-brand-glow text-xl line-through text-gray-400 font-normal mr-1">₹2,400</span> <span class="text-2xl text-brand-neon font-black">₹1,800</span></span>
+                    <button onclick="openModal('offerModal')" class="bg-brand-neon text-black text-xs font-black uppercase px-3 py-1.5 rounded-lg hover:bg-white transition-colors">Claim Now</button>
+                </div>
+            </div>
+
+            <!-- Call To Actions -->
+            <div class="mt-10 flex flex-wrap items-center justify-center gap-4">
+                <button onclick="openModal('offerModal')" class="px-8 py-4 rounded-xl bg-gradient-to-r from-brand-neon to-emerald-400 text-black font-extrabold text-sm uppercase tracking-wider shadow-neon hover:shadow-green-500/50 hover:scale-105 active:scale-95 transition-all flex items-center gap-3">
+                    <i class="fa-solid fa-dumbbell"></i>
+                    <span>Start 3 Months @ ₹1,800</span>
+                </button>
+                <a href="#location" class="px-8 py-4 rounded-xl glass-panel text-white font-bold text-sm uppercase tracking-wider border border-white/20 hover:border-brand-neon hover:text-brand-neon hover:scale-105 transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-location-dot text-brand-neon"></i>
+                    <span>Visit Center in Sankarankoil</span>
+                </a>
+            </div>
+
+            <!-- 3D Hint -->
+            <div class="mt-6 flex items-center justify-center gap-2 text-xs text-gray-400 opacity-80">
+                <i class="fa-solid fa-hand-pointer animate-bounce text-brand-neon"></i>
+                <span>Move your cursor or swipe screen to interact with the 3D fitness sphere</span>
+            </div>
+
+            <!-- Key Quick Stats -->
+            <div class="mt-16 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
+                <div class="glass-panel p-4 rounded-2xl border-white/5">
+                    <div class="font-impactful text-3xl sm:text-4xl text-brand-neon">24 / 6</div>
+                    <div class="text-xs text-gray-400 uppercase tracking-wider mt-0.5">Non-stop Access</div>
+                </div>
+                <div class="glass-panel p-4 rounded-2xl border-white/5">
+                    <div class="font-impactful text-3xl sm:text-4xl text-brand-accent">100%</div>
+                    <div class="text-xs text-gray-400 uppercase tracking-wider mt-0.5">Certified Coaching</div>
+                </div>
+                <div class="glass-panel p-4 rounded-2xl border-white/5">
+                    <div class="font-impactful text-3xl sm:text-4xl text-brand-neon">HEAVY</div>
+                    <div class="text-xs text-gray-400 uppercase tracking-wider mt-0.5">Strength & Iron Free Weights</div>
+                </div>
+                <div class="glass-panel p-4 rounded-2xl border-white/5">
+                    <div class="font-impactful text-3xl sm:text-4xl text-white">500+</div>
+                    <div class="text-xs text-gray-400 uppercase tracking-wider mt-0.5">Transformed Bodies</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Special Offer Section -->
+    <section id="offer" class="py-20 relative bg-black">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="relative rounded-3xl overflow-hidden border border-brand-neon/40 shadow-neon bg-gradient-to-b from-[#13171e] via-[#0d1017] to-black p-8 sm:p-12">
+                <!-- Glowing corner accents -->
+                <div class="absolute -top-12 -right-12 w-48 h-48 bg-brand-neon/20 rounded-full blur-3xl"></div>
+                <div class="absolute -bottom-12 -left-12 w-48 h-48 bg-brand-accent/20 rounded-full blur-3xl"></div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
+                    <div class="lg:col-span-7 space-y-6">
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-md bg-brand-accent/20 border border-brand-accent/40 text-brand-accent text-xs font-bold uppercase tracking-wider">
+                            <i class="fa-solid fa-fire-flame-curved"></i> Exclusive Introductory Pass
+                        </div>
+
+                        <h2 class="font-impactful text-5xl sm:text-6xl uppercase tracking-tight text-white leading-none">
+                            CRUSH YOUR GOALS: <br>
+                            <span class="text-brand-neon">3 FULL MONTHS</span> FOR JUST <span class="text-brand-accent">₹1,800!</span>
+                        </h2>
+
+                        <p class="text-gray-300 text-sm sm:text-base leading-relaxed">
+                            No excuses. Start your transformation now at Sankarankoil's top training ground. Enjoy complete access to modern gym equipment, personalized workout split guidance, and dedicated training atmosphere at an unbeatable price of just <span class="text-white font-bold">₹600/month</span>!
+                        </p>
+
+                        <!-- Feature Checklist -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                            <div class="flex items-center gap-3 text-sm text-gray-200">
+                                <i class="fa-solid fa-circle-check text-brand-neon text-lg"></i>
+                                <span>Unrestricted Full Gym Access</span>
+                            </div>
+                            <div class="flex items-center gap-3 text-sm text-gray-200">
+                                <i class="fa-solid fa-circle-check text-brand-neon text-lg"></i>
+                                <span>Free Fitness Assessment & Diet Tips</span>
+                            </div>
+                            <div class="flex items-center gap-3 text-sm text-gray-200">
+                                <i class="fa-solid fa-circle-check text-brand-neon text-lg"></i>
+                                <span>Clean, Hygienic & Air-Cooled Space</span>
+                            </div>
+                            <div class="flex items-center gap-3 text-sm text-gray-200">
+                                <i class="fa-solid fa-circle-check text-brand-neon text-lg"></i>
+                                <span>Cardio, Iron & Calisthenics Zones</span>
+                            </div>
+                        </div>
+
+                        <!-- Offer Countdown Timer -->
+                        <div class="pt-4">
+                            <div class="text-xs uppercase tracking-wider text-gray-400 mb-2 font-semibold">Special Pricing Closes In:</div>
+                            <div class="flex items-center gap-3 text-center" id="countdownTimer">
+                                <div class="bg-black/60 border border-white/10 px-4 py-2.5 rounded-xl min-w-[70px]">
+                                    <span class="font-impactful text-3xl text-brand-neon block" id="days">04</span>
+                                    <span class="text-[10px] text-gray-400 uppercase">Days</span>
+                                </div>
+                                <div class="text-2xl font-bold text-gray-500">:</div>
+                                <div class="bg-black/60 border border-white/10 px-4 py-2.5 rounded-xl min-w-[70px]">
+                                    <span class="font-impactful text-3xl text-brand-neon block" id="hours">18</span>
+                                    <span class="text-[10px] text-gray-400 uppercase">Hours</span>
+                                </div>
+                                <div class="text-2xl font-bold text-gray-500">:</div>
+                                <div class="bg-black/60 border border-white/10 px-4 py-2.5 rounded-xl min-w-[70px]">
+                                    <span class="font-impactful text-3xl text-brand-neon block" id="minutes">42</span>
+                                    <span class="text-[10px] text-gray-400 uppercase">Mins</span>
+                                </div>
+                                <div class="text-2xl font-bold text-gray-500">:</div>
+                                <div class="bg-black/60 border border-white/10 px-4 py-2.5 rounded-xl min-w-[70px]">
+                                    <span class="font-impactful text-3xl text-brand-accent block" id="seconds">58</span>
+                                    <span class="text-[10px] text-gray-400 uppercase">Secs</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Visual Offer Card -->
+                    <div class="lg:col-span-5">
+                        <div class="relative bg-gradient-to-br from-[#1b2230] to-[#0a0d14] p-8 rounded-3xl border border-white/15 text-center shadow-2xl">
+                            <div class="absolute -top-4 -right-4 bg-brand-accent text-black font-black text-xs uppercase px-4 py-1.5 rounded-full shadow-lg transform rotate-6">
+                                Save 25% Today
+                            </div>
+                            <div class="text-xs uppercase tracking-widest text-gray-400 font-semibold">Change Fitness Membership</div>
+                            <div class="font-impactful text-6xl text-white mt-2">
+                                <span class="text-2xl align-top text-gray-400">₹</span>1,800
+                            </div>
+                            <div class="text-xs text-brand-neon uppercase font-bold tracking-wider">Valid for 3 Months (₹600/mo)</div>
+
+                            <hr class="border-white/10 my-6">
+
+                            <ul class="text-left space-y-3 text-xs sm:text-sm text-gray-300">
+                                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-neon"></i> Instant Onboarding with zero hidden fees</li>
+                                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-neon"></i> Professional Trainer Guidance</li>
+                                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-neon"></i> Flexible Training Hours (24 hrs Mon-Sat)</li>
+                                <li class="flex items-center gap-2"><i class="fa-solid fa-check text-brand-neon"></i> Access to all strength & cardio equipment</li>
+                            </ul>
+
+                            <button onclick="openModal('offerModal')" class="w-full mt-8 py-4 rounded-xl bg-gradient-to-r from-brand-neon to-emerald-400 text-black font-extrabold uppercase tracking-wider text-sm shadow-neon hover:scale-[1.02] active:scale-95 transition-all">
+                                Lock In ₹1,800 Offer Now
+                            </button>
+                            <p class="text-[11px] text-gray-400 mt-3">*Offer eligible strictly for new registrations in Sankarankoil</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Catchy Motivational Quotes & Digital Display Section -->
+    <section id="quotes" class="py-20 relative bg-[#090b10] border-y border-white/5 scanlines">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-12">
+                <span class="text-brand-accent text-xs uppercase tracking-widest font-black flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-bolt"></i> MINDSET FIRST, MUSCLE NEXT
+                </span>
+                <h2 class="font-impactful text-5xl sm:text-6xl uppercase tracking-tight text-white mt-2">
+                    DAILY GAINZ FUEL & <span class="text-brand-neon">BEAST MODE QUOTES</span>
+                </h2>
+                <p class="text-gray-400 text-sm sm:text-base mt-2">
+                    Step inside Change Fitness Center and silence the inner hesitation. Tap below for your instant shot of discipline.
+                </p>
+            </div>
+
+            <!-- Digital Motivational Board -->
+            <div class="glass-panel rounded-3xl p-8 sm:p-12 border border-brand-neon/30 relative shadow-2xl overflow-hidden">
+                <!-- Background visual element -->
+                <div class="absolute -right-10 -bottom-10 opacity-5 text-brand-neon text-[240px] font-impactful select-none pointer-events-none">
+                    CHANGE
+                </div>
+
+                <div class="relative z-10 flex flex-col items-center text-center">
+                    <div class="w-16 h-16 rounded-2xl bg-brand-neon/15 border border-brand-neon/30 flex items-center justify-center text-brand-neon text-2xl mb-6 shadow-neon">
+                        <i class="fa-solid fa-quote-left"></i>
+                    </div>
+
+                    <div id="quoteDisplay" class="min-h-[140px] flex items-center justify-center">
+                        <p class="font-impactful text-3xl sm:text-5xl text-white tracking-wide uppercase transition-all duration-300" id="quoteText">
+                            "THE PAIN YOU FEEL TODAY WILL BE THE STRENGTH YOU FEEL TOMORROW."
+                        </p>
+                    </div>
+
+                    <div class="flex items-center gap-3 mt-4 text-xs font-semibold uppercase tracking-widest text-brand-neon" id="quoteAuthor">
+                        <span>— Change Fitness Philosophy —</span>
+                    </div>
+
+                    <!-- Quote Controls -->
+                    <div class="mt-8 flex flex-wrap items-center justify-center gap-4">
+                        <button onclick="getNewQuote()" class="px-6 py-3 rounded-xl bg-white/10 hover:bg-brand-neon hover:text-black font-bold text-xs uppercase tracking-wider text-white transition-all flex items-center gap-2 border border-white/10">
+                            <i class="fa-solid fa-rotate"></i>
+                            <span>Next Beast Quote</span>
+                        </button>
+                        <button onclick="playMotivationChime()" class="px-6 py-3 rounded-xl bg-brand-accent/20 hover:bg-brand-accent hover:text-black font-bold text-xs uppercase tracking-wider text-brand-accent transition-all flex items-center gap-2 border border-brand-accent/40">
+                            <i class="fa-solid fa-volume-high"></i>
+                            <span>Play Hype Sound</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3 Motivational Punch Card Highlights -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+                <div class="glass-card p-6 rounded-2xl">
+                    <div class="text-brand-neon font-black text-2xl mb-2 font-impactful tracking-wider">01. DISCIPLINE > MOTIVATION</div>
+                    <p class="text-gray-300 text-sm">Motivation gets you started. Unbreakable discipline at Change Fitness Center keeps you showing up at 5 AM or midnight.</p>
+                </div>
+                <div class="glass-card p-6 rounded-2xl">
+                    <div class="text-brand-accent font-black text-2xl mb-2 font-impactful tracking-wider">02. ONE DAY OR DAY ONE</div>
+                    <p class="text-gray-300 text-sm">Waiting for the "perfect Monday"? Your body transforms the moment you step across our threshold in Sankarankoil.</p>
+                </div>
+                <div class="glass-card p-6 rounded-2xl">
+                    <div class="text-brand-neon font-black text-2xl mb-2 font-impactful tracking-wider">03. NO EXCUSES ZONE</div>
+                    <p class="text-gray-300 text-sm">Open 24 hours Monday through Saturday. Whatever your shift or schedule, the barbell is waiting for you.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features & Training Programs -->
+    <section id="features" class="py-20 relative bg-black">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-12">
+                <div>
+                    <span class="text-brand-neon text-xs uppercase tracking-widest font-black">ELITE GEAR & TRAINING PROTOCOLS</span>
+                    <h2 class="font-impactful text-5xl sm:text-6xl uppercase tracking-tight text-white mt-1">
+                        BUILT FOR <span class="text-brand-accent">TRUE PERFORMANCE</span>
+                    </h2>
+                </div>
+                <p class="text-gray-400 text-sm max-w-md mt-4 md:mt-0">
+                    Engineered for strength lifters, beginners, and fitness athletes alike. Clean space, top-grade iron, and structured coaching.
+                </p>
+            </div>
+
+            <!-- Program Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Program 1 -->
+                <div class="glass-card rounded-2xl p-6 flex flex-col justify-between group">
+                    <div>
+                        <div class="w-14 h-14 rounded-xl bg-brand-neon/10 border border-brand-neon/30 flex items-center justify-center text-brand-neon text-2xl mb-5 group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-dumbbell"></i>
+                        </div>
+                        <h3 class="font-impactful text-3xl uppercase text-white tracking-wide">Heavy Iron & Muscle Gain</h3>
+                        <p class="text-gray-400 text-xs sm:text-sm mt-3 leading-relaxed">
+                            Heavy dumbbells, Olympic barbells, squat racks, chest presses, and multi-cable stations to build raw mass and sculpted definition.
+                        </p>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-white/10 flex items-center justify-between text-xs font-semibold text-brand-neon">
+                        <span>STRENGTH ZONE</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </div>
+                </div>
+
+                <!-- Program 2 -->
+                <div class="glass-card rounded-2xl p-6 flex flex-col justify-between group">
+                    <div>
+                        <div class="w-14 h-14 rounded-xl bg-brand-accent/10 border border-brand-accent/30 flex items-center justify-center text-brand-accent text-2xl mb-5 group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-heart-pulse"></i>
+                        </div>
+                        <h3 class="font-impactful text-3xl uppercase text-white tracking-wide">Cardio & Fat Shred</h3>
+                        <p class="text-gray-400 text-xs sm:text-sm mt-3 leading-relaxed">
+                            High-calorie burning treadmills, spin bikes, and intense interval circuits tailored to torch fat and supercharge cardiovascular stamina.
+                        </p>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-white/10 flex items-center justify-between text-xs font-semibold text-brand-accent">
+                        <span>ENDURANCE ZONE</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </div>
+                </div>
+
+                <!-- Program 3 -->
+                <div class="glass-card rounded-2xl p-6 flex flex-col justify-between group">
+                    <div>
+                        <div class="w-14 h-14 rounded-xl bg-brand-neon/10 border border-brand-neon/30 flex items-center justify-center text-brand-neon text-2xl mb-5 group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-user-ninja"></i>
+                        </div>
+                        <h3 class="font-impactful text-3xl uppercase text-white tracking-wide">1-on-1 Personal Training</h3>
+                        <p class="text-gray-400 text-xs sm:text-sm mt-3 leading-relaxed">
+                            Personalized workout schedule, posture correction, and diet guidance customized specifically for your physical goals and body composition.
+                        </p>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-white/10 flex items-center justify-between text-xs font-semibold text-brand-neon">
+                        <span>COACHING PROTOCOL</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </div>
+                </div>
+
+                <!-- Program 4 -->
+                <div class="glass-card rounded-2xl p-6 flex flex-col justify-between group">
+                    <div>
+                        <div class="w-14 h-14 rounded-xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400 text-2xl mb-5 group-hover:scale-110 transition-transform">
+                            <i class="fa-solid fa-shield-halved"></i>
+                        </div>
+                        <h3 class="font-impactful text-3xl uppercase text-white tracking-wide">Hygienic 24-Hour Environment</h3>
+                        <p class="text-gray-400 text-xs sm:text-sm mt-3 leading-relaxed">
+                            Spotlessly sanitized premises, air-cooled ventilation, secure storage lockers, and supportive training brotherhood.
+                        </p>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-white/10 flex items-center justify-between text-xs font-semibold text-purple-400">
+                        <span>PREMIUM AMENITY</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Fitness Tool: Quick BMI & Calories Calculator -->
+    <section class="py-16 bg-[#0c0e14] border-t border-white/5">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="glass-panel p-8 sm:p-10 rounded-3xl border border-white/10">
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
+                    <div class="md:col-span-5 space-y-3">
+                        <span class="text-brand-neon text-xs font-bold uppercase tracking-wider">FITNESS CHECKPOINT</span>
+                        <h3 class="font-impactful text-4xl sm:text-5xl uppercase text-white">CHECK YOUR BMI BEFORE YOU START</h3>
+                        <p class="text-gray-400 text-xs sm:text-sm">
+                            Know your baseline. Our trainers use this to blueprint your 3-month ₹1,800 transformation roadmap.
+                        </p>
+                    </div>
+                    
+                    <div class="md:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs uppercase font-bold text-gray-300 mb-1">Height (cm)</label>
+                            <input type="number" id="bmiHeight" placeholder="e.g. 175" class="w-full bg-black/50 border border-white/15 rounded-xl px-4 py-2.5 text-white text-sm focus:border-brand-neon focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs uppercase font-bold text-gray-300 mb-1">Weight (kg)</label>
+                            <input type="number" id="bmiWeight" placeholder="e.g. 70" class="w-full bg-black/50 border border-white/15 rounded-xl px-4 py-2.5 text-white text-sm focus:border-brand-neon focus:outline-none">
+                        </div>
+                        <div class="sm:col-span-2 flex flex-col sm:flex-row items-center gap-4">
+                            <button onclick="calculateBMI()" class="w-full sm:w-auto px-6 py-2.5 bg-brand-neon text-black font-bold text-xs uppercase tracking-wider rounded-xl hover:bg-white transition-colors">
+                                Calculate My BMI
+                            </button>
+                            <div id="bmiResult" class="text-xs sm:text-sm font-semibold text-gray-300">
+                                Enter height & weight to calculate.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Atmosphere & Visuals Gallery -->
+    <section id="gallery" class="py-20 bg-black">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-2xl mx-auto mb-12">
+                <span class="text-brand-neon text-xs uppercase tracking-widest font-black">THE CHANGE ARENA</span>
+                <h2 class="font-impactful text-5xl sm:text-6xl uppercase tracking-tight text-white mt-1">
+                    INSIDE THE POWERHOUSE
+                </h2>
+                <p class="text-gray-400 text-sm mt-2">
+                    Sweat, determination, and raw steel. Explore the energetic vibe at Change Fitness Center, Sankarankoil.
+                </p>
+            </div>
+
+            <!-- Dynamic Gallery Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Gallery Item 1 -->
+                <div class="group relative rounded-2xl overflow-hidden aspect-[4/3] bg-zinc-900 border border-white/10">
+                    <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=800&q=80" 
+                         alt="Dumbbells and weights at gym" 
+                         class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                         onerror="this.src='https://placehold.co/600x400/111827/22c55e?text=Change+Fitness+Weights'">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent opacity-80 group-hover:opacity-60 transition-opacity"></div>
+                    <div class="absolute bottom-4 left-4 right-4">
+                        <span class="text-xs uppercase font-bold text-brand-neon tracking-wider">Free Weights Area</span>
+                        <p class="text-white text-base font-semibold">Dumbbells from 2.5kg to 40kg+</p>
+                    </div>
+                </div>
+
+                <!-- Gallery Item 2 -->
+                <div class="group relative rounded-2xl overflow-hidden aspect-[4/3] bg-zinc-900 border border-white/10">
+                    <img src="https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?auto=format&fit=crop&w=800&q=80" 
+                         alt="Athlete lifting barbell" 
+                         class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                         onerror="this.src='https://placehold.co/600x400/111827/22c55e?text=Olympic+Barbells'">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent opacity-80 group-hover:opacity-60 transition-opacity"></div>
+                    <div class="absolute bottom-4 left-4 right-4">
+                        <span class="text-xs uppercase font-bold text-brand-accent tracking-wider">Heavy Squat & Deadlift</span>
+                        <p class="text-white text-base font-semibold">Olympic Barbells & Bumper Plates</p>
+                    </div>
+                </div>
+
+                <!-- Gallery Item 3 -->
+                <div class="group relative rounded-2xl overflow-hidden aspect-[4/3] bg-zinc-900 border border-white/10">
+                    <img src="https://images.unsplash.com/photo-1574680096145-d05b474e2155?auto=format&fit=crop&w=800&q=80" 
+                         alt="Gym interior and fitness machines" 
+                         class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                         onerror="this.src='https://placehold.co/600x400/111827/22c55e?text=Gym+Machines'">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent opacity-80 group-hover:opacity-60 transition-opacity"></div>
+                    <div class="absolute bottom-4 left-4 right-4">
+                        <span class="text-xs uppercase font-bold text-brand-neon tracking-wider">Conditioning & Core</span>
+                        <p class="text-white text-base font-semibold">Ergonomic Machines & Isolation Stations</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Location, Timing & Contact Section -->
+    <section id="location" class="py-20 relative bg-[#090b10] border-t border-white/10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+                <!-- Location & Operating Details -->
+                <div class="lg:col-span-6 space-y-8">
+                    <div>
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded bg-brand-neon/10 border border-brand-neon/30 text-brand-neon text-xs font-bold uppercase tracking-widest mb-3">
+                            <i class="fa-solid fa-map-pin"></i> Official Center Info
+                        </div>
+                        <h2 class="font-impactful text-5xl sm:text-6xl uppercase tracking-tight text-white leading-none">
+                            TRAIN ANYTIME IN <span class="text-brand-neon">SANKARANKOIL</span>
+                        </h2>
+                        <p class="text-gray-300 text-sm mt-3 leading-relaxed">
+                            Conveniently located for fitness enthusiasts across Sankarankoil. Check our round-the-clock timetable and drop in for your workout tour.
+                        </p>
+                    </div>
+
+                    <!-- Timings Card -->
+                    <div class="glass-panel p-6 rounded-2xl border-white/10 space-y-4">
+                        <div class="flex items-center justify-between pb-3 border-b border-white/10">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl bg-brand-neon/15 flex items-center justify-center text-brand-neon">
+                                    <i class="fa-regular fa-clock"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-white font-bold text-sm">Operating Hours</h4>
+                                    <p class="text-xs text-gray-400">Continuous 24-hour access</p>
+                                </div>
+                            </div>
+                            <span class="px-2.5 py-1 rounded-md text-[11px] font-black uppercase bg-emerald-500/20 text-brand-neon border border-brand-neon/30">
+                                Open 24/6
+                            </span>
+                        </div>
+
+                        <!-- Schedule rows -->
+                        <div class="space-y-2 text-xs sm:text-sm">
+                            <div class="flex justify-between items-center text-gray-200">
+                                <span class="font-medium">Monday – Saturday:</span>
+                                <span class="font-bold text-brand-neon flex items-center gap-1.5">
+                                    <i class="fa-solid fa-infinity text-xs"></i> Open 24 Hours
+                                </span>
+                            </div>
+                            <div class="flex justify-between items-center text-gray-400">
+                                <span>Sunday:</span>
+                                <span class="font-bold text-rose-400">Closed (Recovery Day)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Exact Address & Plus Code Card -->
+                    <div class="glass-panel p-6 rounded-2xl border-white/10 space-y-4">
+                        <div class="flex items-start gap-4">
+                            <div class="w-10 h-10 rounded-xl bg-brand-accent/15 flex items-center justify-center text-brand-accent shrink-0">
+                                <i class="fa-solid fa-location-dot"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-white font-bold text-sm">Gym Address & Plus Code</h4>
+                                <p class="text-gray-300 text-sm mt-1 font-mono bg-black/40 px-3 py-1.5 rounded-lg border border-white/5 inline-block text-brand-glow">
+                                    5GHV+FRM, Sankarankoil, Tamil Nadu 627756
+                                </p>
+                                <p class="text-xs text-gray-400 mt-2">
+                                    Easily accessible from major bus stops and arterial roads in Sankarankoil.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="pt-2 flex flex-wrap gap-3">
+                            <a href="https://maps.app.goo.gl/tjVvn5YRWBQLxWAd8" target="_blank" class="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-brand-neon hover:text-black text-white text-xs font-bold uppercase transition-all flex items-center gap-2 border border-white/10">
+                                <i class="fa-solid fa-diamond-turn-right text-brand-neon"></i>
+                                Open in Google Maps
+                            </a>
+                            <a href="https://wa.me/919876543210?text=Hello%20Change%20Fitness%20Center,%20I%20am%20interested%20in%20the%203%20Months%20for%20Rs.1800%20Offer!" target="_blank" class="px-4 py-2.5 rounded-xl bg-emerald-600/30 hover:bg-emerald-500 text-emerald-300 hover:text-black text-xs font-bold uppercase transition-all flex items-center gap-2 border border-emerald-500/40">
+                                <i class="fa-brands fa-whatsapp"></i>
+                                Chat on WhatsApp
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Registration / Quick Inquiry Form -->
+                <div class="lg:col-span-6">
+                    <div class="glass-panel p-8 sm:p-10 rounded-3xl border border-white/15 shadow-2xl relative">
+                        <div class="absolute -top-3 right-8 bg-brand-neon text-black text-[11px] font-black uppercase px-3 py-1 rounded-full shadow-neon">
+                            Fast Registration
+                        </div>
+
+                        <h3 class="font-impactful text-3xl sm:text-4xl uppercase text-white mb-1">
+                            CLAIM THE ₹1,800 PASS TODAY
+                        </h3>
+                        <p class="text-xs sm:text-sm text-gray-400 mb-6">
+                            Fill your details below. We will reserve your spot and lock in the 3 months for ₹1,800 pricing before slots run out.
+                        </p>
+
+                        <form id="contactForm" onsubmit="handleInquirySubmit(event)" class="space-y-4">
+                            <div>
+                                <label class="block text-xs uppercase font-bold text-gray-300 mb-1">Your Full Name</label>
+                                <input type="text" id="inquirerName" required placeholder="e.g. Karthik Ram" class="w-full bg-black/60 border border-white/15 rounded-xl px-4 py-3 text-white text-sm focus:border-brand-neon focus:outline-none transition-colors">
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs uppercase font-bold text-gray-300 mb-1">Phone / WhatsApp</label>
+                                    <input type="tel" id="inquirerPhone" required placeholder="e.g. 98765 43210" class="w-full bg-black/60 border border-white/15 rounded-xl px-4 py-3 text-white text-sm focus:border-brand-neon focus:outline-none transition-colors">
+                                </div>
+                                <div>
+                                    <label class="block text-xs uppercase font-bold text-gray-300 mb-1">Primary Fitness Goal</label>
+                                    <select id="inquirerGoal" class="w-full bg-black/60 border border-white/15 rounded-xl px-4 py-3 text-white text-sm focus:border-brand-neon focus:outline-none transition-colors">
+                                        <option value="Muscle Building">Muscle Building</option>
+                                        <option value="Fat Loss / Weight Loss">Fat Loss / Weight Loss</option>
+                                        <option value="Strength & Endurance">Strength & Endurance</option>
+                                        <option value="General Fitness">General Fitness & Health</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs uppercase font-bold text-gray-300 mb-1">Membership Plan</label>
+                                <select id="inquirerPlan" class="w-full bg-black/60 border border-brand-neon/60 rounded-xl px-4 py-3 text-brand-neon font-bold text-sm focus:border-brand-neon focus:outline-none">
+                                    <option value="3 Months Special (₹1,800)">💥 3 Months Special Offer (₹1,800) - Most Popular</option>
+                                    <option value="1 Month Trial (₹800)">1 Month Pass (₹800)</option>
+                                    <option value="6 Months Warrior Pass (₹3,400)">6 Months Warrior Pass (₹3,400)</option>
+                                    <option value="1 Year Ultimate Fitness (₹6,000)">1 Year Ultimate Pass (₹6,000)</option>
+                                </select>
+                            </div>
+
+                            <button type="submit" class="w-full py-4 rounded-xl bg-gradient-to-r from-brand-neon to-emerald-400 text-black font-black uppercase tracking-wider text-sm shadow-neon hover:scale-[1.02] active:scale-95 transition-all mt-4">
+                                Send My Reservation Now
+                            </button>
+                        </form>
+
+                        <div id="formSuccessMessage" class="hidden mt-4 p-4 rounded-xl bg-brand-neon/20 border border-brand-neon text-brand-neon text-xs text-center font-bold">
+                            🎉 Success! Your pass request has been recorded. Our team will contact you shortly!
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-black py-12 border-t border-white/10 text-gray-400 text-xs sm:text-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div class="flex items-center space-x-3">
+                <div class="w-8 h-8 rounded-lg bg-brand-neon flex items-center justify-center text-black font-black text-sm">
+                    <i class="fa-solid fa-bolt"></i>
+                </div>
+                <div>
+                    <span class="font-impactful text-xl text-white tracking-wider block">CHANGE FITNESS CENTER</span>
+                    <span class="text-[10px] text-gray-400">Sankarankoil, Tamil Nadu 627756</span>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-6 text-gray-400">
+                <a href="#offer" class="hover:text-brand-neon transition-colors">3-Month Offer</a>
+                <a href="#features" class="hover:text-brand-neon transition-colors">Facilities</a>
+                <a href="#location" class="hover:text-brand-neon transition-colors">Hours</a>
+                <a href="https://maps.app.goo.gl/tjVvn5YRWBQLxWAd8" target="_blank" class="hover:text-brand-neon transition-colors">Google Maps</a>
+            </div>
+
+            <div class="text-center md:text-right text-gray-400 text-xs">
+                © <span id="currentYear"></span> Change Fitness Center. Built for Champions.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Mobile Sticky Quick Action Bar -->
+    <div class="lg:hidden fixed bottom-3 left-4 right-4 z-40">
+        <div class="glass-panel p-2 rounded-2xl border border-brand-neon/40 shadow-neon flex items-center justify-between gap-2">
+            <a href="https://maps.app.goo.gl/tjVvn5YRWBQLxWAd8" target="_blank" class="flex-1 py-2.5 rounded-xl bg-white/10 text-white text-xs font-bold text-center flex items-center justify-center gap-1.5">
+                <i class="fa-solid fa-location-arrow text-brand-neon"></i>
+                <span>Map Route</span>
+            </a>
+            <button onclick="openModal('offerModal')" class="flex-1 py-2.5 rounded-xl bg-brand-neon text-black text-xs font-black uppercase text-center flex items-center justify-center gap-1 shadow-neon">
+                <i class="fa-solid fa-fire text-black"></i>
+                <span>₹1,800 Deal</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Offer Registration Modal -->
+    <div id="offerModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md hidden transition-opacity">
+        <div class="relative w-full max-w-lg glass-panel rounded-3xl p-6 sm:p-8 border border-brand-neon/50 shadow-neon text-left animate-in fade-in zoom-in duration-300">
+            <button onclick="closeModal('offerModal')" class="absolute top-5 right-5 text-gray-400 hover:text-white text-lg w-8 h-8 rounded-full bg-white/5 flex items-center justify-center">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded bg-brand-accent/20 border border-brand-accent/40 text-brand-accent text-[11px] font-bold uppercase mb-3">
+                🔥 Exclusive Sankarankoil Deal
+            </div>
+
+            <h3 class="font-impactful text-3xl sm:text-4xl uppercase text-white leading-none">
+                3 MONTHS FOR JUST <span class="text-brand-neon">₹1,800</span>
+            </h3>
+            <p class="text-xs text-gray-300 mt-2">
+                Lock in this limited introductory pass. Bring this confirmation to Change Fitness Center reception!
+            </p>
+
+            <form onsubmit="handleModalSubmit(event)" class="space-y-3.5 mt-5">
+                <div>
+                    <label class="block text-xs uppercase font-bold text-gray-300 mb-1">Your Name</label>
+                    <input type="text" id="modalName" required placeholder="Full Name" class="w-full bg-black/70 border border-white/20 rounded-xl px-4 py-2.5 text-white text-sm focus:border-brand-neon focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs uppercase font-bold text-gray-300 mb-1">WhatsApp / Phone Number</label>
+                    <input type="tel" id="modalPhone" required placeholder="10-digit Mobile Number" class="w-full bg-black/70 border border-white/20 rounded-xl px-4 py-2.5 text-white text-sm focus:border-brand-neon focus:outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs uppercase font-bold text-gray-300 mb-1">Preferred Workout Slot</label>
+                    <select id="modalSlot" class="w-full bg-black/70 border border-white/20 rounded-xl px-4 py-2.5 text-white text-sm focus:border-brand-neon focus:outline-none">
+                        <option value="Early Morning (5 AM - 9 AM)">Early Morning (5 AM - 9 AM)</option>
+                        <option value="Afternoon / Flexible">Afternoon (12 PM - 4 PM)</option>
+                        <option value="Evening Prime (5 PM - 10 PM)">Evening Prime (5 PM - 10 PM)</option>
+                        <option value="Night Shift (10 PM - 5 AM)">Late Night (Open 24 Hours)</option>
+                    </select>
+                </div>
+
+                <div class="p-3 rounded-xl bg-white/5 border border-white/10 text-[11px] text-gray-300 flex items-center justify-between">
+                    <span>Discounted Fee:</span>
+                    <span class="text-base font-extrabold text-brand-neon">₹1,800 (Total for 90 Days)</span>
+                </div>
+
+                <button type="submit" class="w-full py-3.5 rounded-xl bg-brand-neon text-black font-extrabold uppercase tracking-wider text-xs shadow-neon hover:bg-white transition-all">
+                    Confirm & Reserve My 3-Month Pass
+                </button>
+            </form>
+
+            <div id="modalSuccess" class="hidden mt-4 p-4 rounded-xl bg-emerald-500/20 border border-brand-neon text-brand-glow text-xs text-center font-bold">
+                🎉 Congratulations! Your ₹1,800 offer pass is confirmed! Check your phone for details or show this screen at the gym.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Set dynamic current year in footer
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+            mobileMenu.classList.toggle('flex');
+        });
+
+        function toggleMobileMenu() {
+            if (!mobileMenu.classList.contains('hidden')) {
+                mobileMenu.classList.add('hidden');
+                mobileMenu.classList.remove('flex');
+            }
+        }
+
+        // Modal Controls
+        function openModal(id) {
+            const modal = document.getElementById(id);
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(id) {
+            const modal = document.getElementById(id);
+            modal.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close on backdrop click
+        window.addEventListener('click', (e) => {
+            const offerModal = document.getElementById('offerModal');
+            if (e.target === offerModal) {
+                closeModal('offerModal');
+            }
+        });
+
+        // Trigger celebratory confetti
+        function fireConfetti() {
+            try {
+                if (typeof confetti === 'function') {
+                    confetti({
+                        particleCount: 100,
+                        spread: 70,
+                        origin: { y: 0.6 },
+                        colors: ['#22c55e', '#f97316', '#ffffff']
+                    });
+                }
+            } catch (err) {
+                console.log('Confetti effect executed');
+            }
+        }
+
+        // Form Submission handlers
+        function handleInquirySubmit(e) {
+            e.preventDefault();
+            const name = document.getElementById('inquirerName').value;
+            const phone = document.getElementById('inquirerPhone').value;
+            const goal = document.getElementById('inquirerGoal').value;
+            const plan = document.getElementById('inquirerPlan').value;
+
+            const successBox = document.getElementById('formSuccessMessage');
+            successBox.classList.remove('hidden');
+            fireConfetti();
+
+            setTimeout(() => {
+                successBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 100);
+        }
+
+        function handleModalSubmit(e) {
+            e.preventDefault();
+            const successBox = document.getElementById('modalSuccess');
+            successBox.classList.remove('hidden');
+            fireConfetti();
+
+            setTimeout(() => {
+                closeModal('offerModal');
+                successBox.classList.add('hidden');
+            }, 3000);
+        }
+
+        // Dynamic Motivational Quotes
+        const quotes = [
+            { quote: "THE PAIN YOU FEEL TODAY WILL BE THE STRENGTH YOU FEEL TOMORROW.", author: "Change Fitness Sankarankoil" },
+            { quote: "DON'T WISH FOR IT. WORK FOR IT.", author: "Iron Discipline" },
+            { quote: "ONE DAY OR DAY ONE. YOU DECIDE.", author: "Daily Grind" },
+            { quote: "YOUR ONLY LIMIT IS THE VOICE INSIDE SAYING YOU CAN'T.", author: "Mental Toughness" },
+            { quote: "SANKARANKOIL'S ULTIMATE POWERHOUSE OF RAW GAINS.", author: "Change Fitness Center" },
+            { quote: "WHEN YOU FEEL LIKE QUITTING, REMEMBER WHY YOU STARTED.", author: "Victory Code" }
+        ];
+
+        let currentQuoteIndex = 0;
+        function getNewQuote() {
+            currentQuoteIndex = (currentQuoteIndex + 1) % quotes.length;
+            const textEl = document.getElementById('quoteText');
+            const authorEl = document.getElementById('quoteAuthor');
+            
+            textEl.style.opacity = '0';
+            setTimeout(() => {
+                textEl.textContent = `"${quotes[currentQuoteIndex].quote}"`;
+                authorEl.textContent = `— ${quotes[currentQuoteIndex].author} —`;
+                textEl.style.opacity = '1';
+            }, 200);
+        }
+
+        // Web Audio Synthesizer for Motivational Chime
+        function playMotivationChime() {
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContext) return;
+                const ctx = new AudioContext();
+
+                // Simple high energy chord synth
+                const notes = [261.63, 329.63, 392.00, 523.25]; // C major triad
+                notes.forEach((freq, i) => {
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(freq, ctx.currentTime + i * 0.08);
+
+                    gain.gain.setValueAtTime(0.001, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.08, ctx.currentTime + i * 0.08 + 0.02);
+                    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + i * 0.08 + 0.6);
+
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+
+                    osc.start(ctx.currentTime + i * 0.08);
+                    osc.stop(ctx.currentTime + i * 0.08 + 0.6);
+                });
+            } catch (err) {
+                console.log("Audio feedback enabled");
+            }
+        }
+
+        // BMI Calculator logic
+        function calculateBMI() {
+            const h = parseFloat(document.getElementById('bmiHeight').value);
+            const w = parseFloat(document.getElementById('bmiWeight').value);
+            const resEl = document.getElementById('bmiResult');
+
+            if (!h || !w || h <= 0 || w <= 0) {
+                resEl.innerHTML = '<span class="text-rose-400">Please enter valid height and weight!</span>';
+                return;
+            }
+
+            const heightInMeters = h / 100;
+            const bmi = (w / (heightInMeters * heightInMeters)).toFixed(1);
+
+            let status = '';
+            let color = 'text-brand-neon';
+
+            if (bmi < 18.5) {
+                status = 'Underweight (Mass Gain Protocol Recommended)';
+                color = 'text-amber-400';
+            } else if (bmi <= 24.9) {
+                status = 'Optimal Fitness Level (Maintain & Sculpt)';
+                color = 'text-brand-neon';
+            } else if (bmi <= 29.9) {
+                status = 'Overweight (Cardio & Strength Protocol)';
+                color = 'text-brand-accent';
+            } else {
+                status = 'Obese Range (High Intensity Fat Loss Recommended)';
+                color = 'text-rose-400';
+            }
+
+            resEl.innerHTML = `Your BMI is <strong class="${color} text-lg">${bmi}</strong> — <span class="text-white">${status}</span>`;
+        }
+
+        // Real-time Countdown Timer for ₹1,800 Offer
+        function updateCountdown() {
+            const daysEl = document.getElementById('days');
+            const hoursEl = document.getElementById('hours');
+            const minsEl = document.getElementById('minutes');
+            const secsEl = document.getElementById('seconds');
+
+            let sec = parseInt(secsEl.textContent);
+            let min = parseInt(minsEl.textContent);
+            let hr = parseInt(hoursEl.textContent);
+            let day = parseInt(daysEl.textContent);
+
+            sec--;
+            if (sec < 0) {
+                sec = 59;
+                min--;
+                if (min < 0) {
+                    min = 59;
+                    hr--;
+                    if (hr < 0) {
+                        hr = 23;
+                        day = Math.max(0, day - 1);
+                    }
+                }
+            }
+
+            secsEl.textContent = sec < 10 ? '0' + sec : sec;
+            minsEl.textContent = min < 10 ? '0' + min : min;
+            hoursEl.textContent = hr < 10 ? '0' + hr : hr;
+            daysEl.textContent = day < 10 ? '0' + day : day;
+        }
+        setInterval(updateCountdown, 1000);
+
+        // Three.js Interactive 3D Athletic Wireframe Mesh & Orbiting Particles
+        function initThreeHero() {
+            const container = document.getElementById('three-container');
+            if (!container) return;
+
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.z = 28;
+
+            const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            container.appendChild(renderer.domElement);
+
+            // Create Centerpiece: Stylized 3D Metallic Athletic Polyhedron (Geodesic Core)
+            const geometry = new THREE.IcosahedronGeometry(9, 2);
+            const wireframeGeometry = new THREE.WireframeGeometry(geometry);
+            const lineMaterial = new THREE.LineBasicMaterial({
+                color: 0x22c55e,
+                transparent: true,
+                opacity: 0.35,
+                linewidth: 1.5
+            });
+            const coreMesh = new THREE.LineSegments(wireframeGeometry, lineMaterial);
+            scene.add(coreMesh);
+
+            // Inner Accent Mesh (Cyber Orange Accent)
+            const innerGeo = new THREE.OctahedronGeometry(5, 1);
+            const innerWire = new THREE.WireframeGeometry(innerGeo);
+            const innerMat = new THREE.LineBasicMaterial({
+                color: 0xf97316,
+                transparent: true,
+                opacity: 0.5
+            });
+            const innerMesh = new THREE.LineSegments(innerWire, innerMat);
+            scene.add(innerMesh);
+
+            // Orbiting Dumbbell / Iron Particle Field
+            const particleCount = 200;
+            const particleGeometry = new THREE.BufferGeometry();
+            const positions = new Float32Array(particleCount * 3);
+            const colors = new Float32Array(particleCount * 3);
+
+            const colorGreen = new THREE.Color(0x22c55e);
+            const colorOrange = new THREE.Color(0xf97316);
+
+            for (let i = 0; i < particleCount * 3; i += 3) {
+                // Sphere distribution
+                const radius = 12 + Math.random() * 18;
+                const theta = Math.random() * Math.PI * 2;
+                const phi = Math.acos((Math.random() * 2) - 1);
+
+                positions[i] = radius * Math.sin(phi) * Math.cos(theta);
+                positions[i + 1] = radius * Math.sin(phi) * Math.sin(theta);
+                positions[i + 2] = radius * Math.cos(phi);
+
+                const c = Math.random() > 0.5 ? colorGreen : colorOrange;
+                colors[i] = c.r;
+                colors[i + 1] = c.g;
+                colors[i + 2] = c.b;
+            }
+
+            particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            particleGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+            const particleMaterial = new THREE.PointsMaterial({
+                size: 0.45,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.8
+            });
+
+            const particles = new THREE.Points(particleGeometry, particleMaterial);
+            scene.add(particles);
+
+            // Mouse Interaction
+            let mouseX = 0;
+            let mouseY = 0;
+            let targetX = 0;
+            let targetY = 0;
+
+            const windowHalfX = window.innerWidth / 2;
+            const windowHalfY = window.innerHeight / 2;
+
+            function onPointerMove(event) {
+                const clientX = event.clientX || (event.touches && event.touches[0].clientX) || 0;
+                const clientY = event.clientY || (event.touches && event.touches[0].clientY) || 0;
+                mouseX = (clientX - windowHalfX) * 0.001;
+                mouseY = (clientY - windowHalfY) * 0.001;
+            }
+
+            window.addEventListener('mousemove', onPointerMove);
+            window.addEventListener('touchmove', onPointerMove, { passive: true });
+
+            // Handle Resize
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+
+            // Animation Loop
+            function animate() {
+                requestAnimationFrame(animate);
+
+                targetX += (mouseX - targetX) * 0.05;
+                targetY += (mouseY - targetY) * 0.05;
+
+                coreMesh.rotation.x += 0.003;
+                coreMesh.rotation.y += 0.005;
+                innerMesh.rotation.x -= 0.005;
+                innerMesh.rotation.z += 0.004;
+
+                particles.rotation.y += 0.0015;
+                particles.rotation.x += 0.0008;
+
+                scene.rotation.y = targetX * 2;
+                scene.rotation.x = targetY * 2;
+
+                renderer.render(scene, camera);
+            }
+
+            animate();
+        }
+
+        // Initialize animation on page load
+        window.onload = function () {
+            initThreeHero();
+        };
+    </script>
+</body>
+</html>
